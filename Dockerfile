@@ -3,7 +3,6 @@ FROM nvidia/cuda:11.1.1-cudnn8-runtime-ubuntu20.04
 LABEL maintainer "Lucky-Mano <phatbowie@gmail.com>"
 
 ENV PYTHON_VERSION=3.9.7 \
-    USER_NAME=lucky \
     WORKSPACE=/app
 
 RUN apt-get update \
@@ -30,12 +29,17 @@ RUN apt-get update \
     && ln -s /usr/local/bin/python3 /usr/local/bin/python \
     && ln -s /usr/local/bin/pip3 /usr/local/bin/pip \
     && pip install -U --no-cache-dir pip setuptools poetry \
-    && useradd -m ${USER_NAME} \
     && rm -rf /Python-${PYTHON_VERSION} \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-USER ${USER_NAME}
+ARG UID=1000
+ARG GID=1000
+
+RUN groupadd -g ${GID} docker \
+    && useradd -u ${UID} -g ${GID} -s /bin/bash -m docker
+
+USER ${UID}
 
 WORKDIR ${WORKSPACE}
 
