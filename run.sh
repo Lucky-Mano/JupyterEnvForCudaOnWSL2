@@ -1,0 +1,1 @@
+poetry install && poetry run poe force-cuda11 && poetry run jupyter lab --ip=0.0.0.0
